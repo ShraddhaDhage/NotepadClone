@@ -45,7 +45,7 @@ public class Notepad
 		frame=new JFrame();
 		frame.setSize(700,500);
 		frame.setVisible(true);
-		Image icon=Toolkit.getDefaultToolkit().getImage("C:\\Users\\user\\internship\\NotepadClone\\noteicon.PNG");
+		Image icon=Toolkit.getDefaultToolkit().getImage("C:\\Users\\user\\internship\\NotepadClone\\notepadicon.PNG");
 		frame.setIconImage(icon);
 		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
