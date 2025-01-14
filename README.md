@@ -1,0 +1,2 @@
+# NotepadClone
+ Notepad 
