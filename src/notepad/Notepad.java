@@ -1,5 +1,7 @@
 package notepad;
 
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -43,6 +45,9 @@ public class Notepad
 		frame=new JFrame();
 		frame.setSize(700,500);
 		frame.setVisible(true);
+		Image icon=Toolkit.getDefaultToolkit().getImage("C:\\Users\\user\\internship\\NotepadClone\\noteicon.PNG");
+		frame.setIconImage(icon);
+		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 	}
