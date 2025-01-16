@@ -1,9 +1,16 @@
 package notepad;
 
+import java.awt.FileDialog;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -28,6 +35,8 @@ public class Notepad
 	//Command Prompt menu items
 	JMenuItem itemCMD;
 	
+	String  openFile=null;
+	String openPath=null;
 	public Notepad()
 	{
 		createFrame();
@@ -42,13 +51,13 @@ public class Notepad
 
 	public void createFrame()
 	{
-		frame=new JFrame();
+		frame=new JFrame("Notepad-Clone");
 		frame.setSize(700,500);
 		frame.setVisible(true);
 		Image icon=Toolkit.getDefaultToolkit().getImage("C:\\Users\\user\\internship\\NotepadClone\\notepadicon.PNG");
 		frame.setIconImage(icon);
 		
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 	}
 	
@@ -90,6 +99,14 @@ public class Notepad
 		itemNew=new JMenuItem("New");
 		fileMenu.add(itemNew);
 		
+		itemNew.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		
 		itemNewWindow=new JMenuItem("New Window");
 		fileMenu.add(itemNewWindow);
 		
@@ -98,21 +115,123 @@ public class Notepad
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Notepad n1=new Notepad();
+				n1.frame.setTitle("Untitled");
 				
 			}
 		});
 		
+		
 		itemOpen=new JMenuItem("Open");
 		fileMenu.add(itemOpen);
+		
+		itemOpen.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				FileDialog fd=new FileDialog(frame, "Open",FileDialog.LOAD);
+				fd.setVisible(true);
+				String path=fd.getDirectory();
+				String fileName =fd.getFile();
+				
+				System.out.println(path+fileName);
+				
+				if (fileName != null) {
+					frame.setTitle(fileName);
+					openFile=fileName;
+					openPath=path;
+					
+					}
+				BufferedReader br = null;
+				try {
+					br = new BufferedReader(new FileReader(openPath+openFile));
+					String line = br.readLine();
+					while (line != null) {
+						textArea.append(line + "\n");
+
+						line = br.readLine();
+					}
+
+					System.out.println("Successfully found file for reading");
+				} catch (FileNotFoundException e1) {
+					System.out.println("Failed to find file for reading");
+				} catch (IOException e1) {
+					System.out.println("File reading failed");
+				}
+
+				finally {
+					try {
+						br.close();
+						System.out.println("br closed successfully");
+					} catch (IOException e1) {
+						System.out.println("Failed to close br");
+					} catch (NullPointerException np) {
+						System.out.println("br object not initialized");
+					}
+				}
+				
+				
+			}
+		});
 		
 		itemSaveAs=new JMenuItem("Save as");
 		fileMenu.add(itemSaveAs);
 		
+		itemSaveAs.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				FileDialog fd=new FileDialog(frame, "Save as", FileDialog.SAVE);
+				
+				fd.setVisible(true);
+				String path =fd.getDirectory();
+				String file=fd.getFile();
+				
+				if(file!=null && path!=null)
+				{
+					writeData(path, file);
+				}
+				
+			}
+		});
+		
+		
 		itemSave=new JMenuItem("Save");
 		fileMenu.add(itemSave);
+		itemSave.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(openFile!=null && openPath!=null)
+				{
+					writeData(openPath, openFile);
+				}
+				else
+				{
+					FileDialog fd=new FileDialog(frame, "Save AS", FileDialog.SAVE);
+					fd.setVisible(true);
+					String path=fd.getDirectory();
+					String fileName=fd.getFile();
+					if(path!=null && fileName!=null)
+					{
+						writeData(path, fileName);
+					}
+				}
+				
+			}
+		});
 		
 		itemExit=new JMenuItem("Exit");
 		fileMenu.add(itemExit);
+		itemExit.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				frame.dispose();
+				
+			}
+		});
 		
 	}
 	
@@ -134,5 +253,35 @@ public class Notepad
 	{
 		itemCMD=new JMenuItem("Open Command Prompt");
 		commandPromptMenu.add(itemCMD);
+	}
+	
+	public void writeData(String path,String file)
+	{
+		if(file!=null && path!=null)
+		{
+			BufferedWriter bw=null;
+			try {
+				 bw=new BufferedWriter(new FileWriter(path+file));
+				String data =textArea.getText();
+				
+				bw.write(data);
+				
+			} catch (IOException e1) {
+				System.out.println("Data failed to write");
+			}
+			finally {
+				try {
+					bw.close();
+				} catch (IOException e1) {
+					System.out.println("Failed to close");
+				}
+				catch(NullPointerException np)
+				{
+					System.out.println("file not found to close");
+				}
+			}
+		}
+		
+		
 	}
 }
